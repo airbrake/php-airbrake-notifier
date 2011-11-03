@@ -24,6 +24,7 @@ class Services_Airbrake
 	protected $line;
 	protected $trace;
 	protected static $blacklist = false;
+	public static $url = "http://airbrakeapp.com/notifier_api/v2/notices";
 
 	/**
 	 * Timeout for cUrl.
@@ -196,7 +197,6 @@ class Services_Airbrake
 	{
 		$this->setParamsForNotify($error_class, $message, $file, $line, $trace, $component);
 
-		$url = "http://airbrakeapp.com/notifier_api/v2/notices";
 		$headers = array(
 			'Accept'				=> 'text/xml, application/xml',
 			'Content-Type'	=> 'text/xml'
@@ -204,7 +204,7 @@ class Services_Airbrake
 		$body = $this->buildXmlNotice();
 
 		try {
-			$status = call_user_func_array(array($this, $this->client . 'Request'), array($url, $headers, $body));
+			$status = call_user_func_array(array($this, $this->client . 'Request'), array(self::$url, $headers, $body));
 			if ($status != 200) $this->handleErrorResponse($status);
 		} catch (RuntimeException $e) {
 			// TODO do something reasonable with the runtime exception.
